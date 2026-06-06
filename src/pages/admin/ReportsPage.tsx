@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   FileText,
   FileSpreadsheet,
@@ -15,8 +15,9 @@ import {
   Clock,
   Star,
   TrendingUp,
+  Loader2,
 } from 'lucide-react';
-import { designers, products, trendData } from '../../data/mockData';
+import { adminAPI, reportAPI } from '@/api';
 
 const monthlyReports = [
   {
@@ -78,18 +79,13 @@ const monthlyReports = [
   },
 ];
 
-const designerPerformance = designers.map((d, i) => ({
-  id: d.id,
-  name: d.name,
-  avatar: d.avatar,
-  title: d.title,
-  style: d.style,
-  projects: d.projects,
-  rating: d.rating,
-  revenue: Math.floor(Math.random() * 5000000) + 1000000,
-  satisfaction: Math.floor(Math.random() * 15) + 85,
-  rank: i + 1,
-}));
+const mockDesigners = [
+  { id: '1', name: '王设计', avatar: '', title: '首席设计师', style: '现代简约', projects: 120, rating: 4.9 },
+  { id: '2', name: '李设计', avatar: '', title: '资深设计师', style: '北欧风格', projects: 95, rating: 4.8 },
+  { id: '3', name: '张设计', avatar: '', title: '主创设计师', style: '中式古典', projects: 88, rating: 4.7 },
+  { id: '4', name: '刘设计', avatar: '', title: '资深设计师', style: '简欧风格', projects: 102, rating: 4.8 },
+  { id: '5', name: '陈设计', avatar: '', title: '设计师', style: '工业风', projects: 76, rating: 4.6 },
+];
 
 const constructionTeams = [
   {
@@ -144,7 +140,20 @@ const constructionTeams = [
   },
 ];
 
-const materialSalesRank = products
+const mockProducts = [
+  { id: '1', name: '诺贝尔瓷砖800x800', category: '瓷砖', brand: '诺贝尔', sales: 520, price: 128, unit: '片', stock: 3000 },
+  { id: '2', name: '圣象强化复合地板', category: '地板', brand: '圣象', sales: 480, price: 189, unit: '㎡', stock: 1500 },
+  { id: '3', name: '立邦净味120乳胶漆', category: '油漆', brand: '立邦', sales: 890, price: 399, unit: '桶', stock: 800 },
+  { id: '4', name: 'TATA实木复合门', category: '门类', brand: 'TATA', sales: 260, price: 2580, unit: '樘', stock: 200 },
+  { id: '5', name: '科勒智能马桶', category: '卫浴', brand: '科勒', sales: 180, price: 4999, unit: '个', stock: 100 },
+  { id: '6', name: '欧派整体橱柜', category: '橱柜', brand: '欧派', sales: 150, price: 12999, unit: '套', stock: 80 },
+  { id: '7', name: '奥普集成吊顶', category: '吊顶', brand: '奥普', sales: 340, price: 299, unit: '㎡', stock: 600 },
+  { id: '8', name: '西门子开关插座套装', category: '电工', brand: '西门子', sales: 1200, price: 29, unit: '个', stock: 5000 },
+  { id: '9', name: '东方雨虹防水涂料', category: '防水材料', brand: '东方雨虹', sales: 680, price: 280, unit: '桶', stock: 400 },
+  { id: '10', name: '伟星PPR水管', category: '管材', brand: '伟星', sales: 1500, price: 25, unit: '米', stock: 8000 },
+];
+
+const materialSalesRank = mockProducts
   .sort((a, b) => b.sales - a.sales)
   .slice(0, 10)
   .map((p, i) => ({
@@ -172,9 +181,88 @@ const reportTypes = [
 export default function ReportsPage() {
   const [activeTab, setActiveTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [designerData, setDesignerData] = useState<any[]>([]);
+  const [exporting, setExporting] = useState<string | null>(null);
 
-  const handleExport = (format: 'pdf' | 'excel', reportId: string) => {
-    alert(`正在导出报表 ${reportId} 为 ${format.toUpperCase()} 格式...`);
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const res = await adminAPI.getRankings({ type: 'designer', limit: 10 });
+        if (res?.designers) {
+          setDesignerData(res.designers.map((d: any, i: number) => ({
+            id: d._id,
+            name: d.name,
+            avatar: d.avatar,
+            title: d.designerProfile?.title || '资深设计师',
+            style: d.designerProfile?.styles?.[0] || '现代简约',
+            projects: d.designerProfile?.orderCount || 0,
+            rating: d.designerProfile?.rating || 4.8,
+            revenue: Math.floor(Math.random() * 5000000) + 1000000,
+            satisfaction: Math.floor(Math.random() * 15) + 85,
+            rank: i + 1,
+          })));
+        }
+      } catch (error) {
+        console.error('Failed to fetch report data');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handleExport = async (format: 'pdf' | 'excel', reportType: string, id?: string) => {
+    setExporting(`${reportType}-${format}-${id || 'all'}`);
+    try {
+      let url = '';
+      const params = { year: new Date().getFullYear(), month: new Date().getMonth() + 1 };
+      
+      const token = localStorage.getItem('token');
+      const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
+
+      switch (reportType) {
+        case 'monthly':
+          url = format === 'excel' 
+            ? reportAPI.exportMonthlyExcel(params)
+            : reportAPI.exportMonthlyPDF(params);
+          break;
+        case 'designer':
+          url = format === 'excel'
+            ? reportAPI.exportDesignerExcel()
+            : reportAPI.exportDesignerPDF();
+          break;
+        case 'constructor':
+          url = format === 'excel'
+            ? reportAPI.exportConstructorExcel()
+            : reportAPI.exportConstructorPDF();
+          break;
+        case 'material':
+          url = format === 'excel'
+            ? reportAPI.exportMaterialExcel()
+            : reportAPI.exportMaterialPDF();
+          break;
+        default:
+          return;
+      }
+
+      const response = await fetch(url, { headers });
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.download = `${reportType}-report.${format === 'excel' ? 'xlsx' : 'pdf'}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (error) {
+      console.error('Export failed:', error);
+      alert('导出失败，请稍后重试');
+    } finally {
+      setExporting(null);
+    }
   };
 
   return (
@@ -296,17 +384,27 @@ export default function ReportsPage() {
                   </button>
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => handleExport('pdf', report.id)}
-                      className="flex items-center gap-1 px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors"
+                      onClick={() => handleExport('pdf', 'monthly', report.id)}
+                      disabled={exporting === `monthly-pdf-${report.id}`}
+                      className="flex items-center gap-1 px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors disabled:opacity-50"
                     >
-                      <FileText className="w-4 h-4" />
+                      {exporting === `monthly-pdf-${report.id}` ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <FileText className="w-4 h-4" />
+                      )}
                       PDF
                     </button>
                     <button
-                      onClick={() => handleExport('excel', report.id)}
-                      className="flex items-center gap-1 px-3 py-1.5 bg-green-50 text-green-600 rounded-lg text-sm font-medium hover:bg-green-100 transition-colors"
+                      onClick={() => handleExport('excel', 'monthly', report.id)}
+                      disabled={exporting === `monthly-excel-${report.id}`}
+                      className="flex items-center gap-1 px-3 py-1.5 bg-green-50 text-green-600 rounded-lg text-sm font-medium hover:bg-green-100 transition-colors disabled:opacity-50"
                     >
-                      <FileSpreadsheet className="w-4 h-4" />
+                      {exporting === `monthly-excel-${report.id}` ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <FileSpreadsheet className="w-4 h-4" />
+                      )}
                       Excel
                     </button>
                   </div>
@@ -339,7 +437,21 @@ export default function ReportsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {designerPerformance.map((designer) => (
+                  {(loading ? Array(6).fill(null) : designerData).map((designer, index) => (
+                    designer || (
+                      <tr key={`skeleton-${index}`} className="border-b border-gray-700/50">
+                        <td className="py-4 px-6"><div className="w-8 h-8 bg-gray-700 rounded-full animate-pulse" /></td>
+                        <td className="py-4 px-6"><div className="w-32 h-6 bg-gray-700 rounded animate-pulse" /></td>
+                        <td className="py-4 px-6"><div className="w-16 h-5 bg-gray-700 rounded animate-pulse" /></td>
+                        <td className="py-4 px-6"><div className="w-12 h-5 bg-gray-700 rounded animate-pulse mx-auto" /></td>
+                        <td className="py-4 px-6"><div className="w-12 h-5 bg-gray-700 rounded animate-pulse mx-auto" /></td>
+                        <td className="py-4 px-6"><div className="w-16 h-5 bg-gray-700 rounded animate-pulse mx-auto" /></td>
+                        <td className="py-4 px-6"><div className="w-24 h-5 bg-gray-700 rounded animate-pulse ml-auto" /></td>
+                        <td className="py-4 px-6"><div className="w-20 h-8 bg-gray-700 rounded animate-pulse mx-auto" /></td>
+                      </tr>
+                    )
+                  ))}
+                  {!loading && designerData.map((designer) => (
                     <tr
                       key={designer.id}
                       className="border-b border-gray-700/50 hover:bg-gray-800/50 transition-colors"
@@ -412,20 +524,30 @@ export default function ReportsPage() {
               </table>
             </div>
             <div className="p-4 border-t border-gray-700 flex items-center justify-between">
-              <span className="text-sm text-gray-400">共 {designerPerformance.length} 条记录</span>
+              <span className="text-sm text-gray-400">共 {designerData.length} 条记录</span>
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => handleExport('pdf', 'all-designers')}
-                  className="flex items-center gap-2 px-4 py-2 bg-red-500/20 text-red-400 rounded-lg text-sm font-medium hover:bg-red-500/30 transition-colors"
+                  onClick={() => handleExport('pdf', 'designer')}
+                  disabled={exporting === 'designer-pdf-all'}
+                  className="flex items-center gap-2 px-4 py-2 bg-red-500/20 text-red-400 rounded-lg text-sm font-medium hover:bg-red-500/30 transition-colors disabled:opacity-50"
                 >
-                  <Download className="w-4 h-4" />
+                  {exporting === 'designer-pdf-all' ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Download className="w-4 h-4" />
+                  )}
                   导出全部PDF
                 </button>
                 <button
-                  onClick={() => handleExport('excel', 'all-designers')}
-                  className="flex items-center gap-2 px-4 py-2 bg-green-500/20 text-green-400 rounded-lg text-sm font-medium hover:bg-green-500/30 transition-colors"
+                  onClick={() => handleExport('excel', 'designer')}
+                  disabled={exporting === 'designer-excel-all'}
+                  className="flex items-center gap-2 px-4 py-2 bg-green-500/20 text-green-400 rounded-lg text-sm font-medium hover:bg-green-500/30 transition-colors disabled:opacity-50"
                 >
-                  <Download className="w-4 h-4" />
+                  {exporting === 'designer-excel-all' ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Download className="w-4 h-4" />
+                  )}
                   导出全部Excel
                 </button>
               </div>

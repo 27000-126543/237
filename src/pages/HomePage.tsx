@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Upload, Users, ShoppingBag, Image, Star, ArrowRight, MapPin } from 'lucide-react';
-import { designers, projects } from '../data/mockData';
 import { Link } from 'react-router-dom';
+import { useDesigners } from '@/hooks/useApi';
 
 const HomePage = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const { data: designersData, loading } = useDesigners({ limit: 4 });
 
   useEffect(() => {
     setIsVisible(true);
@@ -17,8 +18,39 @@ const HomePage = () => {
     { icon: Image, title: '看案例', desc: '海量实景装修参考', color: 'from-gold-400 to-gold-600' },
   ];
 
-  const hotDesigners = designers.slice(0, 4);
-  const featuredCases = projects.slice(0, 6);
+  const hotDesigners = designersData?.designers || [];
+  
+  const featuredCases = hotDesigners.flatMap((designer: any) => 
+    designer.designerProfile?.portfolio?.slice(0, 2) || []
+  ).slice(0, 6);
+
+  const DesignerCardSkeleton = () => (
+    <div className="group bg-white rounded-2xl overflow-hidden shadow-sm animate-pulse">
+      <div className="relative h-64 bg-walnut-100" />
+      <div className="p-6">
+        <div className="flex items-center gap-4 mb-4">
+          <div className="w-14 h-14 rounded-full bg-walnut-100" />
+          <div className="flex-1">
+            <div className="h-5 bg-walnut-100 rounded mb-2 w-3/4" />
+            <div className="h-4 bg-walnut-100 rounded w-1/2" />
+          </div>
+        </div>
+        <div className="h-4 bg-walnut-100 rounded mb-2" />
+        <div className="h-4 bg-walnut-100 rounded w-2/3 mb-4" />
+        <div className="flex gap-2">
+          <div className="h-6 bg-walnut-100 rounded-full w-16" />
+          <div className="h-6 bg-walnut-100 rounded-full w-16" />
+          <div className="h-6 bg-walnut-100 rounded-full w-16" />
+        </div>
+      </div>
+    </div>
+  );
+
+  const CaseCardSkeleton = ({ height }: { height: string }) => (
+    <div className="break-inside-avoid animate-pulse">
+      <div className={`relative rounded-2xl overflow-hidden bg-walnut-100 ${height}`} />
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-cream">
@@ -143,57 +175,63 @@ const HomePage = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {hotDesigners.map((designer, index) => (
-              <div
-                key={designer.id}
-                className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <div className="relative h-64 overflow-hidden">
-                  <img
-                    src={designer.images[0]}
-                    alt={designer.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-walnut-900/80 via-transparent to-transparent" />
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="flex items-center gap-1 px-2 py-1 bg-gold-500/90 rounded-full text-xs font-medium text-walnut-900">
-                        <Star className="w-3 h-3 fill-current" />
-                        {designer.rating}
-                      </div>
-                      <span className="text-white/80 text-sm">{designer.projects}个作品</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <div className="flex items-center gap-4 mb-4">
+            {loading ? (
+              Array(4).fill(0).map((_, index) => (
+                <DesignerCardSkeleton key={index} />
+              ))
+            ) : (
+              hotDesigners.map((designer: any, index: number) => (
+                <div
+                  key={designer.id}
+                  className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  <div className="relative h-64 overflow-hidden">
                     <img
-                      src={designer.avatar}
+                      src={designer.designerProfile?.portfolio?.[0]?.coverImage || designer.avatar}
                       alt={designer.name}
-                      className="w-14 h-14 rounded-full object-cover border-2 border-gold-400"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
-                    <div>
-                      <h3 className="text-lg font-semibold text-walnut-900">{designer.name}</h3>
-                      <p className="text-walnut-500 text-sm">{designer.title}</p>
+                    <div className="absolute inset-0 bg-gradient-to-t from-walnut-900/80 via-transparent to-transparent" />
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="flex items-center gap-1 px-2 py-1 bg-gold-500/90 rounded-full text-xs font-medium text-walnut-900">
+                          <Star className="w-3 h-3 fill-current" />
+                          {designer.designerProfile?.rating || 5.0}
+                        </div>
+                        <span className="text-white/80 text-sm">{designer.designerProfile?.orderCount || 0}个作品</span>
+                      </div>
                     </div>
                   </div>
-                  <p className="text-walnut-600 text-sm mb-4 line-clamp-2">
-                    {designer.description}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {designer.tags.slice(0, 3).map((tag, i) => (
-                      <span
-                        key={i}
-                        className="px-3 py-1 bg-walnut-50 text-walnut-600 text-xs rounded-full"
-                      >
-                        {tag}
-                      </span>
-                    ))}
+                  <div className="p-6">
+                    <div className="flex items-center gap-4 mb-4">
+                      <img
+                        src={designer.avatar}
+                        alt={designer.name}
+                        className="w-14 h-14 rounded-full object-cover border-2 border-gold-400"
+                      />
+                      <div>
+                        <h3 className="text-lg font-semibold text-walnut-900">{designer.name}</h3>
+                        <p className="text-walnut-500 text-sm">{designer.designerProfile?.title || '资深设计师'}</p>
+                      </div>
+                    </div>
+                    <p className="text-walnut-600 text-sm mb-4 line-clamp-2">
+                      {designer.designerProfile?.description || '专注于现代简约风格设计，注重空间利用与居住体验。'}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {(designer.designerProfile?.styles || []).slice(0, 3).map((tag: string, i: number) => (
+                        <span
+                          key={i}
+                          className="px-3 py-1 bg-walnut-50 text-walnut-600 text-xs rounded-full"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -211,54 +249,63 @@ const HomePage = () => {
           </div>
 
           <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
-            {featuredCases.map((project, index) => (
-              <div
-                key={project.id}
-                className="break-inside-avoid group cursor-pointer"
-                style={{ animationDelay: `${index * 150}ms` }}
-              >
-                <div className="relative rounded-2xl overflow-hidden bg-walnut-50">
-                  <img
-                    src={project.images[0]}
-                    alt={project.name}
-                    className={`w-full object-cover group-hover:scale-105 transition-transform duration-700 ${index % 3 === 0 ? 'h-80' : index % 3 === 1 ? 'h-96' : 'h-72'}`}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-walnut-900/90 via-walnut-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  
-                  <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-                      <h3 className="text-xl font-semibold text-white mb-2">{project.name}</h3>
-                      <div className="flex items-center gap-4 text-white/80 text-sm mb-4">
-                        <div className="flex items-center gap-1">
-                          <MapPin className="w-4 h-4" />
-                          <span className="truncate max-w-[150px]">{project.address}</span>
+            {loading ? (
+              Array(6).fill(0).map((_, index) => (
+                <CaseCardSkeleton 
+                  key={index} 
+                  height={index % 3 === 0 ? 'h-80' : index % 3 === 1 ? 'h-96' : 'h-72'} 
+                />
+              ))
+            ) : (
+              featuredCases.map((project: any, index: number) => (
+                <div
+                  key={project.id || index}
+                  className="break-inside-avoid group cursor-pointer"
+                  style={{ animationDelay: `${index * 150}ms` }}
+                >
+                  <div className="relative rounded-2xl overflow-hidden bg-walnut-50">
+                    <img
+                      src={project.coverImage || project.image || 'https://picsum.photos/seed/interior/800/600'}
+                      alt={project.title || '设计案例'}
+                      className={`w-full object-cover group-hover:scale-105 transition-transform duration-700 ${index % 3 === 0 ? 'h-80' : index % 3 === 1 ? 'h-96' : 'h-72'}`}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-walnut-900/90 via-walnut-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    
+                    <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                        <h3 className="text-xl font-semibold text-white mb-2">{project.title || '精选设计案例'}</h3>
+                        <div className="flex items-center gap-4 text-white/80 text-sm mb-4">
+                          <div className="flex items-center gap-1">
+                            <MapPin className="w-4 h-4" />
+                            <span className="truncate max-w-[150px]">{project.location || '中国'}</span>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <div className="px-3 py-1 bg-gold-500/90 rounded-full text-xs font-medium text-walnut-900">
-                          {project.area}㎡
-                        </div>
-                        <div className="text-white/80 text-sm">
-                          预算 ¥{(project.budget / 10000).toFixed(1)}万
+                        <div className="flex items-center gap-4">
+                          <div className="px-3 py-1 bg-gold-500/90 rounded-full text-xs font-medium text-walnut-900">
+                            {project.area || 120}㎡
+                          </div>
+                          <div className="text-white/80 text-sm">
+                            预算 ¥{((project.budget || 200000) / 10000).toFixed(1)}万
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="absolute top-4 right-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      project.status === 'completed' 
-                        ? 'bg-green-500/90 text-white' 
-                        : project.status === 'construction' 
-                        ? 'bg-gold-500/90 text-walnut-900'
-                        : 'bg-walnut-500/90 text-white'
-                    }`}>
-                      {project.status === 'completed' ? '已竣工' : project.status === 'construction' ? '施工中' : '规划中'}
-                    </span>
+                    <div className="absolute top-4 right-4">
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        project.status === 'completed' 
+                          ? 'bg-green-500/90 text-white' 
+                          : project.status === 'construction' 
+                          ? 'bg-gold-500/90 text-walnut-900'
+                          : 'bg-gold-500/90 text-walnut-900'
+                      }`}>
+                        {project.status === 'completed' ? '已竣工' : project.status === 'construction' ? '施工中' : '已完成'}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
 
           <div className="text-center mt-12">

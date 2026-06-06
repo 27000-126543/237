@@ -1,7 +1,17 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Search, ShoppingCart, Filter, ChevronDown, ChevronRight, Star, Check } from 'lucide-react';
-import { products, productCategories } from '@/data/mockData';
+import { productAPI } from '@/api';
 import { useStore } from '@/store/useStore';
+
+const categories = [
+  { name: '地板', icon: 'floor', count: 0 },
+  { name: '瓷砖', icon: 'tile', count: 0 },
+  { name: '涂料', icon: 'paint', count: 0 },
+  { name: '灯具', icon: 'light', count: 0 },
+  { name: '卫浴', icon: 'bath', count: 0 },
+  { name: '家具', icon: 'furniture', count: 0 },
+  { name: '建材', icon: 'material', count: 0 },
+];
 
 const MallPage = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -12,13 +22,41 @@ const MallPage = () => {
   const [showBrandFilter, setShowBrandFilter] = useState(false);
   const [showPriceFilter, setShowPriceFilter] = useState(false);
   const [addedToCart, setAddedToCart] = useState<string | null>(null);
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const params: any = {
+          minPrice: priceRange[0],
+          maxPrice: priceRange[1],
+        };
+        if (selectedCategory) params.category = selectedCategory;
+        if (selectedBrands.length > 0) params.brand = selectedBrands.join(',');
+        if (searchKeyword) params.keyword = searchKeyword;
+
+        const response = await productAPI.getProducts(params);
+        const data = response.data || response;
+        setProducts(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error('获取商品列表失败:', error);
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [selectedCategory, selectedBrands, priceRange, searchKeyword]);
 
   const addItem = useStore((state) => state.addItem);
 
   const brands = useMemo(() => {
-    const brandSet = new Set(products.map((p) => p.brand));
+    const brandSet = new Set(products.map((p) => p.brand).filter(Boolean));
     return Array.from(brandSet);
-  }, []);
+  }, [products]);
 
   const subCategories = useMemo(() => {
     if (!selectedCategory) return [];
@@ -28,15 +66,7 @@ const MallPage = () => {
     return Array.from(subSet);
   }, [selectedCategory]);
 
-  const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
-      if (selectedCategory && product.category !== selectedCategory) return false;
-      if (selectedBrands.length > 0 && !selectedBrands.includes(product.brand)) return false;
-      if (product.price < priceRange[0] || product.price > priceRange[1]) return false;
-      if (searchKeyword && !product.name.includes(searchKeyword)) return false;
-      return true;
-    });
-  }, [selectedCategory, selectedBrands, priceRange, searchKeyword]);
+  const filteredProducts = products;
 
   const toggleCategory = (category: string) => {
     if (expandedCategories.includes(category)) {
@@ -54,15 +84,17 @@ const MallPage = () => {
     }
   };
 
-  const handleAddToCart = (product: typeof products[0]) => {
+  const handleAddToCart = (product: any) => {
     const productForCart = {
       ...product,
-      images: [product.image],
+      id: product._id,
+      image: product.images?.[0] || '',
+      images: product.images || [],
       originalPrice: product.price * 1.2,
-      specs: {}
+      specs: product.specs || {}
     };
     addItem(productForCart as any);
-    setAddedToCart(product.id);
+    setAddedToCart(product._id);
     setTimeout(() => setAddedToCart(null), 1500);
   };
 
@@ -84,7 +116,7 @@ const MallPage = () => {
             <h2 className="text-lg font-bold text-gray-900">商品分类</h2>
           </div>
           <div className="p-2">
-            {productCategories.map((category) => (
+            {categories.map((category) => (
               <div key={category.name}>
                 <div
                   className={`flex items-center justify-between px-4 py-3 cursor-pointer rounded-lg transition-colors ${
@@ -284,75 +316,98 @@ const MallPage = () => {
           </div>
 
           <div className="p-6">
-            <div className="grid grid-cols-4 gap-6">
-              {filteredProducts.map((product) => (
-                <div
-                  key={product.id}
-                  className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group"
-                >
-                  <div className="relative overflow-hidden">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-52 object-cover transform group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div className="absolute top-3 left-3">
-                      <span className="px-2 py-1 bg-amber-500 text-white text-xs rounded-full">
-                        {product.brand}
-                      </span>
-                    </div>
-                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-medium text-gray-900 mb-2 line-clamp-2 h-12">
-                      {product.name}
-                    </h3>
-                    <p className="text-gray-400 text-xs mb-3">{product.specs}</p>
-                    <div className="flex items-center gap-1 mb-3">
-                      {renderStars(product.rating)}
-                      <span className="text-xs text-gray-400 ml-1">({product.sales}人付款)</span>
-                    </div>
-                    <div className="flex items-end justify-between">
-                      <div>
-                        <span className="text-amber-500 font-bold text-xl">¥{product.price}</span>
-                        <span className="text-gray-400 text-sm">/{product.unit}</span>
+            {loading ? (
+              <div className="grid grid-cols-4 gap-6">
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                  <div
+                    key={i}
+                    className="bg-white rounded-xl shadow-sm overflow-hidden animate-pulse"
+                  >
+                    <div className="w-full h-52 bg-gray-200" />
+                    <div className="p-4">
+                      <div className="h-4 bg-gray-200 rounded mb-2" />
+                      <div className="h-4 bg-gray-200 rounded w-2/3 mb-3" />
+                      <div className="h-3 bg-gray-200 rounded w-1/2 mb-3" />
+                      <div className="flex justify-between items-end">
+                        <div className="h-6 bg-gray-200 rounded w-1/3" />
+                        <div className="w-10 h-10 bg-gray-200 rounded-full" />
                       </div>
-                      <button
-                        onClick={() => handleAddToCart(product)}
-                        className={`p-2.5 rounded-full transition-all duration-300 ${
-                          addedToCart === product.id
-                            ? 'bg-green-500 text-white'
-                            : 'bg-amber-500 hover:bg-amber-600 text-white'
-                        }`}
-                      >
-                        {addedToCart === product.id ? (
-                          <Check size={18} />
-                        ) : (
-                          <ShoppingCart size={18} />
-                        )}
-                      </button>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-
-            {filteredProducts.length === 0 && (
-              <div className="text-center py-20">
-                <div className="text-6xl mb-4">🔍</div>
-                <p className="text-gray-500 text-lg">没有找到符合条件的商品</p>
-                <button
-                  onClick={() => {
-                    setSelectedCategory(null);
-                    setSelectedBrands([]);
-                    setPriceRange([0, 10000]);
-                    setSearchKeyword('');
-                  }}
-                  className="mt-4 px-6 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors"
-                >
-                  清除筛选条件
-                </button>
+                ))}
               </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-4 gap-6">
+                  {filteredProducts.map((product) => (
+                    <div
+                      key={product._id}
+                      className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group"
+                    >
+                      <div className="relative overflow-hidden">
+                        <img
+                          src={product.images?.[0] || ''}
+                          alt={product.name}
+                          className="w-full h-52 object-cover transform group-hover:scale-110 transition-transform duration-500"
+                        />
+                        <div className="absolute top-3 left-3">
+                          <span className="px-2 py-1 bg-amber-500 text-white text-xs rounded-full">
+                            {product.brand}
+                          </span>
+                        </div>
+                        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      </div>
+                      <div className="p-4">
+                        <h3 className="font-medium text-gray-900 mb-2 line-clamp-2 h-12">
+                          {product.name}
+                        </h3>
+                        <p className="text-gray-400 text-xs mb-3">{product.specs}</p>
+                        <div className="flex items-center gap-1 mb-3">
+                          {renderStars(product.rating)}
+                          <span className="text-xs text-gray-400 ml-1">({product.sales}人付款)</span>
+                        </div>
+                        <div className="flex items-end justify-between">
+                          <div>
+                            <span className="text-amber-500 font-bold text-xl">¥{product.price}</span>
+                          </div>
+                          <button
+                            onClick={() => handleAddToCart(product)}
+                            className={`p-2.5 rounded-full transition-all duration-300 ${
+                              addedToCart === product._id
+                                ? 'bg-green-500 text-white'
+                                : 'bg-amber-500 hover:bg-amber-600 text-white'
+                            }`}
+                          >
+                            {addedToCart === product._id ? (
+                              <Check size={18} />
+                            ) : (
+                              <ShoppingCart size={18} />
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {filteredProducts.length === 0 && !loading && (
+                  <div className="text-center py-20">
+                    <div className="text-6xl mb-4">🔍</div>
+                    <p className="text-gray-500 text-lg">没有找到符合条件的商品</p>
+                    <button
+                      onClick={() => {
+                        setSelectedCategory(null);
+                        setSelectedBrands([]);
+                        setPriceRange([0, 10000]);
+                        setSearchKeyword('');
+                      }}
+                      className="mt-4 px-6 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors"
+                    >
+                      清除筛选条件
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

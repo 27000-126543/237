@@ -1367,6 +1367,134 @@ const seedDatabase = async () => {
         tags: ['墙纸', '自粘', '防水'],
         rating: 4.5,
         reviewCount: 345
+      },
+      {
+        name: '实木复合门',
+        brand: '梦天',
+        category: '建材',
+        subCategory: '门',
+        price: 2299,
+        originalPrice: 2899,
+        images: ['https://picsum.photos/seed/material23/400/400'],
+        description: '实木复合门，环保烤漆，隔音效果好，卧室书房适用。',
+        specs: new Map([['规格', '2100*900mm'], ['材质', '实木复合'], ['表面', '烤漆']]),
+        stock: 100,
+        sales: 456,
+        tags: ['木门', '实木复合', '隔音'],
+        rating: 4.7,
+        reviewCount: 189
+      },
+      {
+        name: '厨房集成灶',
+        brand: '火星人',
+        category: '建材',
+        subCategory: '厨电',
+        price: 8999,
+        originalPrice: 10999,
+        images: ['https://picsum.photos/seed/material24/400/400'],
+        description: '集成灶一体灶，侧吸下排，消毒柜款，节省空间。',
+        specs: new Map([['规格', '900mm'], ['类型', '集成灶'], ['功能', '烟灶消一体']]),
+        stock: 50,
+        sales: 234,
+        tags: ['集成灶', '火星人', '侧吸下排'],
+        rating: 4.8,
+        reviewCount: 156
+      },
+      {
+        name: '恒温花洒套装',
+        brand: '汉斯格雅',
+        category: '卫浴',
+        subCategory: '花洒',
+        price: 3299,
+        originalPrice: 4299,
+        images: ['https://picsum.photos/seed/bath7/400/400'],
+        description: '德国品牌恒温花洒，空气注入技术，雨淋式出水体验。',
+        specs: new Map([['规格', '恒温款'], ['材质', '全铜'], ['功能', '空气注入']]),
+        stock: 60,
+        sales: 345,
+        tags: ['恒温花洒', '汉斯格雅', '高端'],
+        rating: 4.9,
+        reviewCount: 234
+      },
+      {
+        name: '北欧实木茶几',
+        brand: '原始原素',
+        category: '家具',
+        subCategory: '茶几',
+        price: 1299,
+        originalPrice: 1699,
+        images: ['https://picsum.photos/seed/furniture7/400/400'],
+        description: '北美橡木材质，环保木蜡油，简约北欧风格。',
+        specs: new Map([['规格', '120*60*45cm'], ['材质', '橡木'], ['风格', '北欧']]),
+        stock: 80,
+        sales: 456,
+        tags: ['茶几', '实木', '北欧'],
+        rating: 4.7,
+        reviewCount: 289
+      },
+      {
+        name: '儿童学习桌椅套装',
+        brand: '护童',
+        category: '家具',
+        subCategory: '儿童家具',
+        price: 3599,
+        originalPrice: 4599,
+        images: ['https://picsum.photos/seed/furniture8/400/400'],
+        description: '可升降学习桌椅，人体工学设计，预防近视驼背。',
+        specs: new Map([['规格', '120cm桌面'], ['功能', '可升降'], ['适用', '儿童学习']]),
+        stock: 40,
+        sales: 189,
+        tags: ['学习桌', '儿童', '可升降'],
+        rating: 4.8,
+        reviewCount: 156
+      },
+      {
+        name: '厨房拉篮',
+        brand: '凯斯宝玛',
+        category: '建材',
+        subCategory: '橱柜配件',
+        price: 599,
+        originalPrice: 799,
+        images: ['https://picsum.photos/seed/material25/400/400'],
+        description: '不锈钢厨房拉篮，阻尼滑轨，收纳调味品和碗碟。',
+        specs: new Map([['规格', '800柜体'], ['材质', '不锈钢'], ['功能', '阻尼缓冲']]),
+        stock: 150,
+        sales: 567,
+        tags: ['拉篮', '橱柜配件', '收纳'],
+        rating: 4.6,
+        reviewCount: 345
+      },
+      {
+        name: '地漏防臭器',
+        brand: '潜水艇',
+        category: '卫浴',
+        subCategory: '五金配件',
+        price: 89,
+        originalPrice: 129,
+        images: ['https://picsum.photos/seed/bath8/400/400'],
+        description: '全铜防臭地漏，深水封设计，防虫防反味。',
+        specs: new Map([['规格', '10*10cm'], ['材质', '全铜'], ['功能', '防臭防虫']]),
+        stock: 500,
+        sales: 2340,
+        tags: ['地漏', '防臭', '全铜'],
+        rating: 4.7,
+        reviewCount: 678
+      },
+      {
+        name: '地板打蜡清洁剂',
+        brand: '威猛先生',
+        category: '建材',
+        subCategory: '清洁用品',
+        price: 49,
+        originalPrice: 69,
+        images: ['https://picsum.photos/seed/material26/400/400'],
+        description: '地板清洁剂，打蜡二合一，适用于实木地板和复合地板。',
+        specs: new Map([['规格', '1L'], ['适用', '各类地板'], ['功能', '清洁+打蜡']]),
+        stock: 800,
+        sales: 3450,
+        tags: ['地板清洁剂', '打蜡', '家居清洁'],
+        rating: 4.5,
+        reviewCount: 456
       }
     ];
 
@@ -1408,5 +1536,759 @@ const seedDatabase = async () => {
         ],
         paidAt: new Date('2026-03-15'),
         createdAt: new Date('2026-03-10')
+      },
+      {
+        orderNo: generateOrderNo(),
+        userId: owners[1]._id,
+        designerId: designers[1]._id,
+        type: 'design',
+        status: 'completed',
+        totalAmount: 168000,
+        items: [
+          { productId: products[4]._id, name: '仿古木纹瓷砖', type: 'product', price: 79, quantity: 60, image: products[4].images[0] },
+          { productId: products[22]._id, name: '喷射虹吸式马桶', type: 'product', price: 1299, quantity: 2, image: products[22].images[0] }
+        ],
+        address: {
+          province: '上海市',
+          city: '上海市',
+          district: '浦东新区',
+          detail: '阳光海岸8栋1单元802',
+          contactName: '李女士',
+          contactPhone: '13700000002'
+        },
+        houseInfo: {
+          area: 95,
+          layout: '两居室',
+          style: '北欧风格',
+          budget: 168000
+        },
+        paymentNodes: [
+          { name: '设计费', amount: 16800, percentage: 10, status: 'paid' },
+          { name: '材料款', amount: 100800, percentage: 60, status: 'paid' },
+          { name: '施工款', amount: 50400, percentage: 30, status: 'paid' }
+        ],
+        paidAt: new Date('2026-01-15'),
+        completedAt: new Date('2026-05-20'),
+        createdAt: new Date('2026-01-10')
+      },
+      {
+        orderNo: generateOrderNo(),
+        userId: owners[2]._id,
+        designerId: designers[2]._id,
+        type: 'full',
+        status: 'processing',
+        totalAmount: 880000,
+        items: [
+          { productId: products[23]._id, name: '智能马桶一体机', type: 'product', price: 4999, quantity: 3, image: products[23].images[0] },
+          { productId: products[36]._id, name: '厨房整体橱柜定制', type: 'product', price: 2999, quantity: 6, image: products[36].images[0] }
+        ],
+        address: {
+          province: '广东省',
+          city: '深圳市',
+          district: '南山区',
+          detail: '紫云台别墅区A5栋',
+          contactName: '王先生',
+          contactPhone: '13700000003'
+        },
+        houseInfo: {
+          area: 268,
+          layout: '别墅',
+          style: '新中式',
+          budget: 880000
+        },
+        paymentNodes: [
+          { name: '定金', amount: 176000, percentage: 20, status: 'paid' },
+          { name: '开工款', amount: 352000, percentage: 40, status: 'paid' },
+          { name: '中期款', amount: 264000, percentage: 30, status: 'pending' },
+          { name: '尾款', amount: 88000, percentage: 10, status: 'pending' }
+        ],
+        paidAt: new Date('2026-04-05'),
+        createdAt: new Date('2026-04-01')
+      },
+      {
+        orderNo: generateOrderNo(),
+        userId: owners[3]._id,
+        designerId: designers[5]._id,
+        type: 'material',
+        status: 'completed',
+        totalAmount: 128000,
+        items: [
+          { productId: products[3]._id, name: 'SPC石塑地板', type: 'product', price: 89, quantity: 70, image: products[3].images[0] },
+          { productId: products[16]._id, name: '筒灯嵌入式', type: 'product', price: 39, quantity: 20, image: products[16].images[0] }
+        ],
+        address: {
+          province: '浙江省',
+          city: '杭州市',
+          district: '西湖区',
+          detail: '青春里公寓B座1218',
+          contactName: '刘女士',
+          contactPhone: '13700000004'
+        },
+        houseInfo: {
+          area: 68,
+          layout: 'LOFT',
+          style: '工业风格',
+          budget: 128000
+        },
+        paidAt: new Date('2026-05-28'),
+        completedAt: new Date('2026-06-02'),
+        createdAt: new Date('2026-05-25')
+      },
+      {
+        orderNo: generateOrderNo(),
+        userId: owners[4]._id,
+        designerId: designers[3]._id,
+        type: 'full',
+        status: 'processing',
+        totalAmount: 450000,
+        items: [
+          { productId: products[5]._id, name: '通体大理石瓷砖', type: 'product', price: 159, quantity: 120, image: products[5].images[0] },
+          { productId: products[21]._id, name: '实木浴室柜组合', type: 'product', price: 2599, quantity: 2, image: products[21].images[0] }
+        ],
+        address: {
+          province: '广东省',
+          city: '广州市',
+          district: '天河区',
+          detail: '锦绣华府5栋3单元2201',
+          contactName: '陈先生',
+          contactPhone: '13700000005'
+        },
+        houseInfo: {
+          area: 165,
+          layout: '四居室',
+          style: '轻奢风格',
+          budget: 450000
+        },
+        paymentNodes: [
+          { name: '定金', amount: 90000, percentage: 20, status: 'paid' },
+          { name: '开工款', amount: 180000, percentage: 40, status: 'paid' },
+          { name: '中期款', amount: 135000, percentage: 30, status: 'paid' },
+          { name: '尾款', amount: 45000, percentage: 10, status: 'pending' }
+        ],
+        paidAt: new Date('2026-02-25'),
+        createdAt: new Date('2026-02-20')
+      },
+      {
+        orderNo: generateOrderNo(),
+        userId: owners[5]._id,
+        type: 'material',
+        status: 'pending',
+        totalAmount: 13956,
+        items: [
+          { productId: products[1]._id, name: '强化复合地板', type: 'product', price: 129, quantity: 90, image: products[1].images[0] },
+          { productId: products[14]._id, name: '艺术漆', type: 'product', price: 599, quantity: 3, image: products[14].images[0] }
+        ],
+        address: {
+          province: '四川省',
+          city: '成都市',
+          district: '武侯区',
+          detail: '锦城花园2栋4单元602',
+          contactName: '赵女士',
+          contactPhone: '13700000006'
+        },
+        createdAt: new Date('2026-05-25')
+      },
+      {
+        orderNo: generateOrderNo(),
+        userId: owners[6]._id,
+        type: 'material',
+        status: 'cancelled',
+        totalAmount: 6672,
+        items: [
+          { productId: products[7]._id, name: '300*600内墙砖', type: 'product', price: 49, quantity: 80, image: products[7].images[0] },
+          { productId: products[12]._id, name: '防水涂料', type: 'product', price: 189, quantity: 4, image: products[12].images[0] }
+        ],
+        address: {
+          province: '湖北省',
+          city: '武汉市',
+          district: '江汉区',
+          detail: '城市广场1栋1单元1803',
+          contactName: '孙先生',
+          contactPhone: '13700000007'
+        },
+        createdAt: new Date('2026-06-05')
+      },
+      {
+        orderNo: generateOrderNo(),
+        userId: owners[7]._id,
+        designerId: designers[6]._id,
+        type: 'design',
+        status: 'paid',
+        totalAmount: 380000,
+        items: [
+          { productId: products[31]._id, name: '整体衣柜定制', type: 'product', price: 899, quantity: 12, image: products[31].images[0] }
+        ],
+        address: {
+          province: '江苏省',
+          city: '南京市',
+          district: '鼓楼区',
+          detail: '学府雅苑6栋2单元1001',
+          contactName: '周女士',
+          contactPhone: '13700000008'
+        },
+        houseInfo: {
+          area: 138,
+          layout: '三居室',
+          style: '法式风格',
+          budget: 380000
+        },
+        paidAt: new Date('2026-03-20'),
+        createdAt: new Date('2026-03-15')
+      },
+      {
+        orderNo: generateOrderNo(),
+        userId: owners[8]._id,
+        designerId: designers[8]._id,
+        type: 'full',
+        status: 'completed',
+        totalAmount: 118000,
+        items: [
+          { productId: products[27]._id, name: '板式双人床', type: 'product', price: 1999, quantity: 2, image: products[27].images[0] },
+          { productId: products[28]._id, name: '乳胶床垫', type: 'product', price: 2599, quantity: 2, image: products[28].images[0] }
+        ],
+        address: {
+          province: '陕西省',
+          city: '西安市',
+          district: '雁塔区',
+          detail: '万科城3栋1单元1202',
+          contactName: '吴先生',
+          contactPhone: '13700000009'
+        },
+        houseInfo: {
+          area: 85,
+          layout: '两居室',
+          style: '极简风格',
+          budget: 118000
+        },
+        paidAt: new Date('2026-01-05'),
+        completedAt: new Date('2026-04-10'),
+        createdAt: new Date('2026-01-01')
+      },
+      {
+        orderNo: generateOrderNo(),
+        userId: owners[9]._id,
+        designerId: designers[9]._id,
+        type: 'full',
+        status: 'processing',
+        totalAmount: 198000,
+        items: [
+          { productId: products[26]._id, name: '简约布艺沙发', type: 'product', price: 3999, quantity: 1, image: products[26].images[0] }
+        ],
+        address: {
+          province: '福建省',
+          city: '厦门市',
+          district: '思明区',
+          detail: '海景花园5栋2单元803',
+          contactName: '郑女士',
+          contactPhone: '13700000010'
+        },
+        houseInfo: {
+          area: 105,
+          layout: '三居室',
+          style: '地中海风格',
+          budget: 198000
+        },
+        paidAt: new Date('2026-04-10'),
+        createdAt: new Date('2026-04-05')
+      },
+      {
+        orderNo: generateOrderNo(),
+        userId: owners[0]._id,
+        type: 'material',
+        status: 'delivered',
+        totalAmount: 26902,
+        items: [
+          { productId: products[0]._id, name: '三层实木复合地板', type: 'product', price: 289, quantity: 80, image: products[0].images[0] },
+          { productId: products[10]._id, name: '净味内墙乳胶漆', type: 'product', price: 399, quantity: 5, image: products[10].images[0] }
+        ],
+        address: {
+          province: '北京市',
+          city: '北京市',
+          district: '朝阳区',
+          detail: '翡翠花园3栋2单元1501',
+          contactName: '张先生',
+          contactPhone: '13700000001'
+        },
+        paidAt: new Date('2026-06-01'),
+        completedAt: new Date('2026-06-05'),
+        createdAt: new Date('2026-06-01')
+      },
+      {
+        orderNo: generateOrderNo(),
+        userId: owners[1]._id,
+        type: 'material',
+        status: 'shipped',
+        totalAmount: 9112,
+        items: [
+          { productId: products[4]._id, name: '仿古木纹瓷砖', type: 'product', price: 79, quantity: 60, image: products[4].images[0] },
+          { productId: products[22]._id, name: '喷射虹吸式马桶', type: 'product', price: 1299, quantity: 2, image: products[22].images[0] }
+        ],
+        address: {
+          province: '上海市',
+          city: '上海市',
+          district: '浦东新区',
+          detail: '阳光海岸8栋1单元802',
+          contactName: '李女士',
+          contactPhone: '13700000002'
+        },
+        paidAt: new Date('2026-06-02'),
+        createdAt: new Date('2026-06-02')
+      },
+      {
+        orderNo: generateOrderNo(),
+        userId: owners[2]._id,
+        type: 'material',
+        status: 'pending',
+        totalAmount: 32991,
+        items: [
+          { productId: products[23]._id, name: '智能马桶一体机', type: 'product', price: 4999, quantity: 3, image: products[23].images[0] },
+          { productId: products[36]._id, name: '厨房整体橱柜定制', type: 'product', price: 2999, quantity: 6, image: products[36].images[0] }
+        ],
+        address: {
+          province: '广东省',
+          city: '深圳市',
+          district: '南山区',
+          detail: '紫云台别墅区A5栋',
+          contactName: '王先生',
+          contactPhone: '13700000003'
+        },
+        createdAt: new Date('2026-06-03')
+      },
+      {
+        orderNo: generateOrderNo(),
+        userId: owners[3]._id,
+        type: 'material',
+        status: 'delivered',
+        totalAmount: 8630,
+        items: [
+          { productId: products[3]._id, name: 'SPC石塑地板', type: 'product', price: 89, quantity: 70, image: products[3].images[0] },
+          { productId: products[16]._id, name: '筒灯嵌入式', type: 'product', price: 39, quantity: 20, image: products[16].images[0] }
+        ],
+        address: {
+          province: '浙江省',
+          city: '杭州市',
+          district: '西湖区',
+          detail: '青春里公寓B座1218',
+          contactName: '刘女士',
+          contactPhone: '13700000004'
+        },
+        paidAt: new Date('2026-05-28'),
+        completedAt: new Date('2026-05-31'),
+        createdAt: new Date('2026-05-28')
+      },
+      {
+        orderNo: generateOrderNo(),
+        userId: owners[4]._id,
+        type: 'material',
+        status: 'paid',
+        totalAmount: 37674,
+        items: [
+          { productId: products[5]._id, name: '通体大理石瓷砖', type: 'product', price: 159, quantity: 120, image: products[5].images[0] },
+          { productId: products[21]._id, name: '实木浴室柜组合', type: 'product', price: 2599, quantity: 2, image: products[21].images[0] }
+        ],
+        address: {
+          province: '广东省',
+          city: '广州市',
+          district: '天河区',
+          detail: '锦绣华府5栋3单元2201',
+          contactName: '陈先生',
+          contactPhone: '13700000005'
+        },
+        paidAt: new Date('2026-06-04'),
+        createdAt: new Date('2026-06-04')
+      },
+      {
+        orderNo: generateOrderNo(),
+        userId: owners[5]._id,
+        type: 'material',
+        status: 'delivered',
+        totalAmount: 13956,
+        items: [
+          { productId: products[1]._id, name: '强化复合地板', type: 'product', price: 129, quantity: 90, image: products[1].images[0] },
+          { productId: products[14]._id, name: '艺术漆', type: 'product', price: 599, quantity: 3, image: products[14].images[0] }
+        ],
+        address: {
+          province: '四川省',
+          city: '成都市',
+          district: '武侯区',
+          detail: '锦城花园2栋4单元602',
+          contactName: '赵女士',
+          contactPhone: '13700000006'
+        },
+        paidAt: new Date('2026-05-25'),
+        completedAt: new Date('2026-05-28'),
+        createdAt: new Date('2026-05-25')
+      },
+      {
+        orderNo: generateOrderNo(),
+        userId: owners[0]._id,
+        type: 'construction',
+        status: 'paid',
+        totalAmount: 128000,
+        address: {
+          province: '北京市',
+          city: '北京市',
+          district: '朝阳区',
+          detail: '翡翠花园3栋2单元1501',
+          contactName: '张先生',
+          contactPhone: '13700000001'
+        },
+        houseInfo: {
+          area: 128,
+          layout: '三居室',
+          style: '现代简约',
+          budget: 280000
+        },
+        paidAt: new Date('2026-03-20'),
+        createdAt: new Date('2026-03-18')
       }
     ];
+
+    const orders = await Order.insertMany(ordersData);
+    console.log(`✅ 成功创建 ${orders.length} 个订单`);
+
+    console.log('🏗️  正在创建施工项目数据...');
+    const constructionsData = [
+      {
+        orderId: orders[0]._id,
+        userId: owners[0]._id,
+        name: '翡翠花园三居室装修',
+        address: '北京市朝阳区翡翠花园3栋2单元1501',
+        area: 128,
+        totalPrice: 128000,
+        expectedDays: 90,
+        constructorId: constructors[0]._id,
+        status: 'constructing',
+        progress: [
+          { name: '拆改阶段', status: 'completed', startDate: new Date('2026-03-20'), endDate: new Date('2026-03-30'), description: '墙体拆除、结构改造' },
+          { name: '水电阶段', status: 'completed', startDate: new Date('2026-03-31'), endDate: new Date('2026-04-15'), description: '水电路改造、防水处理' },
+          { name: '泥木阶段', status: 'completed', startDate: new Date('2026-04-16'), endDate: new Date('2026-05-05'), description: '瓷砖铺贴、吊顶制作' },
+          { name: '油漆阶段', status: 'in_progress', startDate: new Date('2026-05-06'), description: '墙面腻子、乳胶漆' },
+          { name: '安装阶段', status: 'pending', description: '灯具、洁具、橱柜安装' },
+          { name: '竣工验收', status: 'pending', description: '清洁开荒、竣工验收' }
+        ],
+        photos: [
+          { url: 'https://picsum.photos/seed/site1/800/600', description: '客厅吊顶施工', uploadedBy: constructors[0]._id },
+          { url: 'https://picsum.photos/seed/site2/800/600', description: '厨房墙砖铺贴', uploadedBy: constructors[0]._id }
+        ],
+        reports: [
+          { title: '第4周监理报告', content: '木工施工中，吊顶龙骨已完成，材料验收合格。', submittedBy: constructors[0]._id, type: 'normal' }
+        ],
+        timeline: [
+          { title: '项目开工', description: '施工队进场，开始拆改', date: new Date('2026-03-20'), status: 'completed' },
+          { title: '水电验收', description: '水电改造完成，验收合格', date: new Date('2026-04-15'), status: 'completed' },
+          { title: '泥木验收', description: '瓷砖铺贴完成，验收合格', date: new Date('2026-05-05'), status: 'completed' },
+          { title: '油漆施工', description: '正在进行墙面油漆施工', date: new Date('2026-05-20'), status: 'current' }
+        ],
+        startDate: new Date('2026-03-20'),
+        expectedEndDate: new Date('2026-06-20')
+      },
+      {
+        orderId: orders[1]._id,
+        userId: owners[1]._id,
+        name: '阳光海岸两居室北欧风',
+        address: '上海市浦东新区阳光海岸8栋1单元802',
+        area: 95,
+        totalPrice: 98000,
+        expectedDays: 75,
+        constructorId: constructors[1]._id,
+        status: 'completed',
+        progress: [
+          { name: '拆改阶段', status: 'completed', startDate: new Date('2026-01-20'), endDate: new Date('2026-01-28') },
+          { name: '水电阶段', status: 'completed', startDate: new Date('2026-01-29'), endDate: new Date('2026-02-12') },
+          { name: '泥木阶段', status: 'completed', startDate: new Date('2026-02-13'), endDate: new Date('2026-03-05') },
+          { name: '油漆阶段', status: 'completed', startDate: new Date('2026-03-06'), endDate: new Date('2026-03-25') },
+          { name: '安装阶段', status: 'completed', startDate: new Date('2026-03-26'), endDate: new Date('2026-04-10') },
+          { name: '竣工验收', status: 'completed', startDate: new Date('2026-04-11'), endDate: new Date('2026-04-15') }
+        ],
+        photos: [
+          { url: 'https://picsum.photos/seed/site3/800/600', description: '完工效果', uploadedBy: constructors[1]._id }
+        ],
+        acceptance: {
+          items: [
+            { name: '水电工程', passed: true, remark: '合格' },
+            { name: '瓷砖铺贴', passed: true, remark: '空鼓率符合标准' },
+            { name: '油漆工程', passed: true, remark: '平整度良好' }
+          ],
+          passed: true,
+          acceptedAt: new Date('2026-04-15'),
+          remark: '验收合格'
+        },
+        timeline: [
+          { title: '项目开工', description: '施工队进场', date: new Date('2026-01-20'), status: 'completed' },
+          { title: '竣工验收', description: '项目完工验收', date: new Date('2026-04-15'), status: 'completed' }
+        ],
+        startDate: new Date('2026-01-20'),
+        expectedEndDate: new Date('2026-04-15'),
+        actualEndDate: new Date('2026-04-15')
+      },
+      {
+        orderId: orders[2]._id,
+        userId: owners[2]._id,
+        name: '紫云台新中式大宅',
+        address: '深圳市南山区紫云台别墅区A5栋',
+        area: 268,
+        totalPrice: 580000,
+        expectedDays: 180,
+        constructorId: constructors[2]._id,
+        status: 'constructing',
+        progress: [
+          { name: '拆改阶段', status: 'completed', startDate: new Date('2026-04-10'), endDate: new Date('2026-04-25') },
+          { name: '水电阶段', status: 'in_progress', startDate: new Date('2026-04-26'), description: '水电路改造进行中' },
+          { name: '泥木阶段', status: 'pending' },
+          { name: '油漆阶段', status: 'pending' },
+          { name: '安装阶段', status: 'pending' },
+          { name: '竣工验收', status: 'pending' }
+        ],
+        bids: [
+          { constructorId: constructors[0]._id, price: 600000, days: 180, description: '金牌团队施工' },
+          { constructorId: constructors[2]._id, price: 580000, days: 175, description: '匠心施工，品质保证', status: 'accepted' }
+        ],
+        timeline: [
+          { title: '项目开工', description: '施工队进场', date: new Date('2026-04-10'), status: 'completed' },
+          { title: '水电施工', description: '正在进行水电改造', date: new Date('2026-04-26'), status: 'current' }
+        ],
+        startDate: new Date('2026-04-10'),
+        expectedEndDate: new Date('2026-10-10')
+      },
+      {
+        orderId: orders[3]._id,
+        userId: owners[3]._id,
+        name: '青春里LOFT工业风',
+        address: '杭州市西湖区青春里公寓B座1218',
+        area: 68,
+        totalPrice: 88000,
+        expectedDays: 65,
+        constructorId: constructors[3]._id,
+        status: 'bidding',
+        bids: [
+          { constructorId: constructors[1]._id, price: 95000, days: 70, description: '精工装饰' },
+          { constructorId: constructors[3]._id, price: 88000, days: 65, description: '诚信装修队' },
+          { constructorId: constructors[4]._id, price: 92000, days: 68, description: '优品施工队' }
+        ],
+        timeline: [
+          { title: '招标中', description: '等待施工队投标', date: new Date('2026-06-01'), status: 'current' }
+        ],
+        startDate: new Date('2026-06-01'),
+        expectedEndDate: new Date('2026-08-05')
+      },
+      {
+        orderId: orders[4]._id,
+        userId: owners[4]._id,
+        name: '锦绣华府轻奢四居',
+        address: '广州市天河区锦绣华府5栋3单元2201',
+        area: 165,
+        totalPrice: 185000,
+        expectedDays: 100,
+        constructorId: constructors[4]._id,
+        status: 'acceptance',
+        progress: [
+          { name: '拆改阶段', status: 'completed', startDate: new Date('2026-03-01'), endDate: new Date('2026-03-10') },
+          { name: '水电阶段', status: 'completed', startDate: new Date('2026-03-11'), endDate: new Date('2026-03-28') },
+          { name: '泥木阶段', status: 'completed', startDate: new Date('2026-03-29'), endDate: new Date('2026-04-20') },
+          { name: '油漆阶段', status: 'completed', startDate: new Date('2026-04-21'), endDate: new Date('2026-05-10') },
+          { name: '安装阶段', status: 'completed', startDate: new Date('2026-05-11'), endDate: new Date('2026-05-30') },
+          { name: '竣工验收', status: 'in_progress', startDate: new Date('2026-06-01'), description: '正在验收中' }
+        ],
+        acceptance: {
+          items: [
+            { name: '水电工程', passed: true },
+            { name: '瓷砖铺贴', passed: true },
+            { name: '油漆工程', passed: false, remark: '部分墙面需修补' },
+            { name: '安装工程', passed: true }
+          ],
+          passed: false,
+          remark: '部分项目需整改'
+        },
+        timeline: [
+          { title: '项目开工', description: '施工队进场', date: new Date('2026-03-01'), status: 'completed' },
+          { title: '竣工验收', description: '正在验收', date: new Date('2026-06-01'), status: 'current' }
+        ],
+        startDate: new Date('2026-03-01'),
+        expectedEndDate: new Date('2026-06-10')
+      },
+      {
+        orderId: orders[8]._id,
+        userId: owners[8]._id,
+        name: '极简白色公寓',
+        address: '西安市雁塔区万科城3栋1单元1202',
+        area: 85,
+        totalPrice: 78000,
+        expectedDays: 60,
+        constructorId: constructors[0]._id,
+        status: 'completed',
+        progress: [
+          { name: '拆改阶段', status: 'completed', startDate: new Date('2026-01-10'), endDate: new Date('2026-01-17') },
+          { name: '水电阶段', status: 'completed', startDate: new Date('2026-01-18'), endDate: new Date('2026-02-01') },
+          { name: '泥木阶段', status: 'completed', startDate: new Date('2026-02-02'), endDate: new Date('2026-02-20') },
+          { name: '油漆阶段', status: 'completed', startDate: new Date('2026-02-21'), endDate: new Date('2026-03-10') },
+          { name: '安装阶段', status: 'completed', startDate: new Date('2026-03-11'), endDate: new Date('2026-03-25') },
+          { name: '竣工验收', status: 'completed', startDate: new Date('2026-03-26'), endDate: new Date('2026-03-30') }
+        ],
+        timeline: [
+          { title: '项目开工', description: '施工队进场', date: new Date('2026-01-10'), status: 'completed' },
+          { title: '竣工验收', description: '项目完工交付', date: new Date('2026-03-30'), status: 'completed' }
+        ],
+        startDate: new Date('2026-01-10'),
+        expectedEndDate: new Date('2026-03-30'),
+        actualEndDate: new Date('2026-03-30')
+      },
+      {
+        orderId: orders[9]._id,
+        userId: owners[9]._id,
+        name: '地中海风情公寓',
+        address: '厦门市思明区海景花园5栋2单元803',
+        area: 105,
+        totalPrice: 118000,
+        expectedDays: 80,
+        constructorId: constructors[1]._id,
+        status: 'constructing',
+        progress: [
+          { name: '拆改阶段', status: 'completed', startDate: new Date('2026-04-15'), endDate: new Date('2026-04-23') },
+          { name: '水电阶段', status: 'completed', startDate: new Date('2026-04-24'), endDate: new Date('2026-05-10') },
+          { name: '泥木阶段', status: 'in_progress', startDate: new Date('2026-05-11'), description: '瓷砖铺贴进行中' },
+          { name: '油漆阶段', status: 'pending' },
+          { name: '安装阶段', status: 'pending' },
+          { name: '竣工验收', status: 'pending' }
+        ],
+        timeline: [
+          { title: '项目开工', description: '施工队进场', date: new Date('2026-04-15'), status: 'completed' },
+          { title: '泥木施工', description: '正在进行泥瓦工程', date: new Date('2026-05-11'), status: 'current' }
+        ],
+        startDate: new Date('2026-04-15'),
+        expectedEndDate: new Date('2026-07-05')
+      },
+      {
+        orderId: orders[7]._id,
+        userId: owners[7]._id,
+        name: '法式浪漫公寓',
+        address: '南京市鼓楼区学府雅苑6栋2单元1001',
+        area: 138,
+        totalPrice: 228000,
+        expectedDays: 110,
+        constructorId: constructors[2]._id,
+        status: 'contract',
+        contract: {
+          content: '装修工程施工合同，包含设计、施工、材料采购等。',
+          signedByOwner: true,
+          signedByConstructor: true,
+          signedAt: new Date('2026-03-25')
+        },
+        timeline: [
+          { title: '签订合同', description: '双方签订施工合同', date: new Date('2026-03-25'), status: 'completed' },
+          { title: '准备开工', description: '材料准备中', date: new Date('2026-03-28'), status: 'current' }
+        ],
+        startDate: new Date('2026-04-01'),
+        expectedEndDate: new Date('2026-07-20')
+      },
+      {
+        userId: owners[5]._id,
+        orderId: orders[5]._id,
+        name: '锦城花园两居室装修',
+        address: '成都市武侯区锦城花园2栋4单元602',
+        area: 88,
+        totalPrice: 95000,
+        expectedDays: 70,
+        status: 'bidding',
+        bids: [
+          { constructorId: constructors[3]._id, price: 95000, days: 70, description: '诚信装修队，价格实惠' },
+          { constructorId: constructors[4]._id, price: 98000, days: 68, description: '优品施工队，工艺精湛' }
+        ],
+        timeline: [
+          { title: '招标中', description: '等待施工队报价', date: new Date('2026-05-28'), status: 'current' }
+        ],
+        startDate: new Date('2026-06-10'),
+        expectedEndDate: new Date('2026-08-20')
+      },
+      {
+        userId: owners[6]._id,
+        orderId: orders[6]._id,
+        name: '城市广场三居室',
+        address: '武汉市江汉区城市广场1栋1单元1803',
+        area: 115,
+        totalPrice: 135000,
+        expectedDays: 85,
+        constructorId: constructors[3]._id,
+        status: 'cancelled',
+        timeline: [
+          { title: '项目取消', description: '业主取消装修计划', date: new Date('2026-06-06'), status: 'completed' }
+        ],
+        startDate: new Date('2026-06-05'),
+        expectedEndDate: new Date('2026-09-01')
+      }
+    ];
+
+    const constructions = await Construction.insertMany(constructionsData);
+    console.log(`✅ 成功创建 ${constructions.length} 个施工项目`);
+
+    console.log('⭐ 正在创建评价数据...');
+    const reviewsData = [
+      { userId: owners[0]._id, targetId: designers[0]._id, targetType: 'designer', orderId: orders[0]._id, rating: 5, content: '张伟设计师非常专业，设计方案很符合我们的需求，沟通也很顺畅，强烈推荐！', createdAt: new Date('2026-05-20') },
+      { userId: owners[0]._id, targetId: constructors[0]._id, targetType: 'constructor', orderId: orders[0]._id, rating: 4, content: '施工队工艺不错，工人师傅很负责，进度也基本符合预期。', createdAt: new Date('2026-05-25') },
+      { userId: owners[0]._id, targetId: products[0]._id, targetType: 'product', orderId: orders[10]._id, rating: 5, content: '地板质量很好，木纹纹理自然，脚感舒适，安装师傅也很专业。', createdAt: new Date('2026-06-08') },
+      { userId: owners[1]._id, targetId: designers[1]._id, targetType: 'designer', orderId: orders[1]._id, rating: 5, content: '李娜设计师的北欧风格设计太喜欢了，温馨又实用，每个细节都考虑得很周到。', createdAt: new Date('2026-04-20') },
+      { userId: owners[1]._id, targetId: constructors[1]._id, targetType: 'constructor', orderId: orders[1]._id, rating: 5, content: '精工装饰队名不虚传，工艺精湛，每个细节都处理得很好，非常满意！', createdAt: new Date('2026-04-25') },
+      { userId: owners[1]._id, targetId: products[4]._id, targetType: 'product', orderId: orders[11]._id, rating: 4, content: '瓷砖质量不错，纹理好看，就是送货稍微慢了一点。', createdAt: new Date('2026-06-10') },
+      { userId: owners[2]._id, targetId: designers[2]._id, targetType: 'designer', orderId: orders[2]._id, rating: 5, content: '王强设计师的新中式设计很有韵味，将传统与现代完美结合，非常满意！', createdAt: new Date('2026-05-15') },
+      { userId: owners[2]._id, targetId: constructors[2]._id, targetType: 'constructor', orderId: orders[2]._id, rating: 4, content: '匠心工程队施工质量不错，项目经理很负责，定期汇报进度。', createdAt: new Date('2026-05-20') },
+      { userId: owners[2]._id, targetId: products[23]._id, targetType: 'product', orderId: orders[12]._id, rating: 5, content: 'TOTO智能马桶果然名不虚传，功能齐全，使用体验非常好！', createdAt: new Date('2026-06-05') },
+      { userId: owners[3]._id, targetId: designers[5]._id, targetType: 'designer', orderId: orders[3]._id, rating: 4, content: '刘洋设计师的工业风设计很有个性，符合我们的喜好，沟通也很顺畅。', createdAt: new Date('2026-06-01') },
+      { userId: owners[3]._id, targetId: products[3]._id, targetType: 'product', orderId: orders[13]._id, rating: 5, content: 'SPC石塑地板安装简单，防水效果好，价格也实惠，性价比很高。', createdAt: new Date('2026-06-03') },
+      { userId: owners[4]._id, targetId: designers[3]._id, targetType: 'designer', orderId: orders[4]._id, rating: 5, content: '陈静设计师的轻奢风格设计太赞了，精致又大气，朋友们都说好看！', createdAt: new Date('2026-05-10') },
+      { userId: owners[4]._id, targetId: constructors[4]._id, targetType: 'constructor', orderId: orders[4]._id, rating: 4, content: '优品施工队工艺不错，材料也很环保，整体效果满意。', createdAt: new Date('2026-05-28') },
+      { userId: owners[4]._id, targetId: products[5]._id, targetType: 'product', orderId: orders[14]._id, rating: 5, content: '通体大理石瓷砖质感很好，高端大气，铺贴效果非常棒！', createdAt: new Date('2026-06-08') },
+      { userId: owners[5]._id, targetId: products[1]._id, targetType: 'product', orderId: orders[15]._id, rating: 4, content: '强化地板性价比很高，耐磨易打理，适合有小孩的家庭。', createdAt: new Date('2026-06-02') },
+      { userId: owners[5]._id, targetId: products[14]._id, targetType: 'product', orderId: orders[15]._id, rating: 5, content: '艺术漆效果很惊艳，质感丰富，让整个空间都提升了档次。', createdAt: new Date('2026-06-02') },
+      { userId: owners[7]._id, targetId: designers[6]._id, targetType: 'designer', orderId: orders[7]._id, rating: 5, content: '赵雪设计师的法式风格设计浪漫优雅，每个细节都很精致，非常喜欢！', createdAt: new Date('2026-04-15') },
+      { userId: owners[7]._id, targetId: products[31]._id, targetType: 'product', orderId: orders[7]._id, rating: 5, content: '索菲亚衣柜定制很专业，设计合理，收纳功能强大，质量也很好。', createdAt: new Date('2026-05-10') },
+      { userId: owners[8]._id, targetId: designers[8]._id, targetType: 'designer', orderId: orders[8]._id, rating: 5, content: '吴涛设计师的极简风格设计很符合我们的理念，简约而不简单，非常满意！', createdAt: new Date('2026-04-05') },
+      { userId: owners[8]._id, targetId: constructors[0]._id, targetType: 'constructor', orderId: orders[8]._id, rating: 5, content: '金牌施工队果然名不虚传，质量好，进度快，服务也很到位！', createdAt: new Date('2026-04-08') },
+      { userId: owners[8]._id, targetId: products[27]._id, targetType: 'product', orderId: orders[8]._id, rating: 4, content: '板式床质量不错，储物空间很大，性价比高。', createdAt: new Date('2026-04-15') },
+      { userId: owners[8]._id, targetId: products[28]._id, targetType: 'product', orderId: orders[8]._id, rating: 5, content: '喜临门乳胶床垫睡得很舒服，支撑性好，再也不腰疼了。', createdAt: new Date('2026-04-15') },
+      { userId: owners[9]._id, targetId: designers[9]._id, targetType: 'designer', orderId: orders[9]._id, rating: 4, content: '郑芳设计师的地中海风格清新自然，很符合海边城市的氛围。', createdAt: new Date('2026-05-05') },
+      { userId: owners[9]._id, targetId: constructors[1]._id, targetType: 'constructor', orderId: orders[9]._id, rating: 4, content: '精工装饰队施工质量稳定，工人师傅手艺不错。', createdAt: new Date('2026-05-20') },
+      { userId: owners[9]._id, targetId: products[26]._id, targetType: 'product', orderId: orders[9]._id, rating: 5, content: '顾家沙发坐感舒适，面料很好，科技布确实好打理。', createdAt: new Date('2026-05-25') },
+      { userId: owners[0]._id, targetId: products[10]._id, targetType: 'product', orderId: orders[10]._id, rating: 5, content: '立邦乳胶漆确实没什么味道，刷完很快就能入住，环保放心。', createdAt: new Date('2026-06-08') },
+      { userId: owners[1]._id, targetId: products[22]._id, targetType: 'product', orderId: orders[11]._id, rating: 4, content: '九牧马桶冲水效果好，也比较节水，性价比高。', createdAt: new Date('2026-06-10') },
+      { userId: owners[3]._id, targetId: products[16]._id, targetType: 'product', orderId: orders[13]._id, rating: 5, content: '飞利浦筒灯质量很好，光线柔和不刺眼，推荐购买。', createdAt: new Date('2026-06-03') },
+      { userId: owners[2]._id, targetId: products[36]._id, targetType: 'product', orderId: orders[12]._id, rating: 5, content: '欧派橱柜果然大品牌，设计合理，做工精细，安装师傅也很专业。', createdAt: new Date('2026-06-05') },
+      { userId: owners[4]._id, targetId: products[21]._id, targetType: 'product', orderId: orders[14]._id, rating: 4, content: '恒洁浴室柜质量不错，收纳空间大，就是价格稍贵。', createdAt: new Date('2026-06-08') },
+      { userId: owners[0]._id, targetId: products[44]._id, targetType: 'product', rating: 5, content: '伟星水管质量很好，热熔连接很方便，师傅说这是行业名牌。', createdAt: new Date('2026-04-01') },
+      { userId: owners[1]._id, targetId: products[45]._id, targetType: 'product', rating: 5, content: '远东电缆国标铜线，质量有保障，装修用着放心。', createdAt: new Date('2026-02-15') },
+      { userId: owners[2]._id, targetId: products[56]._id, targetType: 'product', rating: 5, content: '公牛插座确实好，做工扎实，插拔顺畅，安全有保障。', createdAt: new Date('2026-04-20') },
+      { userId: owners[3]._id, targetId: products[50]._id, targetType: 'product', rating: 4, content: '奥普浴霸取暖效果很好，就是安装稍微复杂了点。', createdAt: new Date('2026-05-10') }
+    ];
+
+    const reviews = await Review.insertMany(reviewsData);
+    console.log(`✅ 成功创建 ${reviews.length} 条评价数据`);
+
+    console.log('');
+    console.log('🎉 数据库种子数据创建完成！');
+    console.log('');
+    console.log('📊 数据统计：');
+    console.log(`  - 管理员账号: 1个 (admin/123456)`);
+    console.log(`  - 设计师: ${designers.length} 位`);
+    console.log(`  - 施工队: ${constructors.length} 支`);
+    console.log(`  - 业主用户: ${owners.length} 位`);
+    console.log(`  - 建材商品: ${products.length} 个`);
+    console.log(`  - 订单: ${orders.length} 个`);
+    console.log(`  - 施工项目: ${constructions.length} 个`);
+    console.log(`  - 评价数据: ${reviews.length} 条`);
+    console.log('');
+
+    console.log('🔌 正在断开数据库连接...');
+    await mongoose.disconnect();
+    console.log('✅ 数据库连接已断开');
+    console.log('');
+    console.log('💡 使用说明：');
+    console.log('  - 运行命令: npm run seed');
+    console.log('  - 管理员登录: 手机号 13800000000 / 密码 123456');
+    console.log('  - 其他用户默认密码均为: 123456');
+
+  } catch (error) {
+    console.error('❌ 种子数据创建失败:', error);
+    process.exit(1);
+  }
+};
+
+seedDatabase();

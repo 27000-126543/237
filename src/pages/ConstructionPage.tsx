@@ -1,42 +1,42 @@
 import { Link } from 'react-router-dom';
 import { Home, ChevronRight, ClipboardList, CheckCircle, Clock, Users } from 'lucide-react';
+import { useConstructions } from '@/hooks/useApi';
+
+const statusMap: Record<string, string> = {
+  bidding: '招标中',
+  contract: '签约中',
+  constructing: '施工中',
+  acceptance: '验收中',
+  completed: '已竣工',
+  cancelled: '已取消',
+};
+
+const formatDate = (dateStr: string) => {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const calculateProgress = (progressNodes: any[]) => {
+  if (!progressNodes || progressNodes.length === 0) return 0;
+  const completed = progressNodes.filter((node: any) => node.status === 'completed').length;
+  return Math.round((completed / progressNodes.length) * 100);
+};
+
+const getCurrentPhase = (project: any) => {
+  if (project.progressNodes && project.progressNodes.length > 0) {
+    const currentNode = project.progressNodes.find((node: any) => node.status === 'in_progress');
+    if (currentNode) return currentNode.name;
+  }
+  return statusMap[project.status] || '';
+};
 
 const ConstructionPage = () => {
-  const projects = [
-    {
-      id: 1,
-      name: '张先生家装修项目',
-      address: '北京市朝阳区XX小区',
-      status: 'construction',
-      statusText: '施工中',
-      progress: 65,
-      currentPhase: '水电改造',
-      startDate: '2024-01-15',
-      expectedDate: '2024-04-15',
-    },
-    {
-      id: 2,
-      name: '李女士别墅装修',
-      address: '北京市海淀区XX别墅',
-      status: 'planning',
-      statusText: '准备中',
-      progress: 10,
-      currentPhase: '设计确认',
-      startDate: '2024-02-01',
-      expectedDate: '2024-06-01',
-    },
-    {
-      id: 3,
-      name: '王先生旧房改造',
-      address: '北京市西城区XX胡同',
-      status: 'completed',
-      statusText: '已竣工',
-      progress: 100,
-      currentPhase: '验收完成',
-      startDate: '2023-10-01',
-      expectedDate: '2024-01-01',
-    },
-  ];
+  const { data, loading } = useConstructions();
+  const projects: any[] = data?.constructions || [];
 
   const phases = [
     { name: '设计阶段', icon: ClipboardList, status: 'done' },
@@ -60,43 +60,59 @@ const ConstructionPage = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-2xl shadow-sm p-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
-                <ClipboardList className="w-6 h-6 text-blue-600" />
+          {loading ? (
+            Array(3).fill(0).map((_, index) => (
+              <div key={index} className="bg-white rounded-2xl shadow-sm p-6 animate-pulse">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-walnut-100" />
+                  <div className="space-y-2">
+                    <div className="h-8 w-12 bg-walnut-100 rounded" />
+                    <div className="h-4 w-20 bg-walnut-100 rounded" />
+                  </div>
+                </div>
               </div>
-              <div>
-                <p className="text-2xl font-bold text-walnut-900">{projects.length}</p>
-                <p className="text-walnut-500">全部项目</p>
+            ))
+          ) : (
+            <>
+              <div className="bg-white rounded-2xl shadow-sm p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
+                    <ClipboardList className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-walnut-900">{projects.length}</p>
+                    <p className="text-walnut-500">全部项目</p>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          <div className="bg-white rounded-2xl shadow-sm p-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gold-100 flex items-center justify-center">
-                <Clock className="w-6 h-6 text-gold-600" />
+              <div className="bg-white rounded-2xl shadow-sm p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-gold-100 flex items-center justify-center">
+                    <Clock className="w-6 h-6 text-gold-600" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-walnut-900">
+                      {projects.filter(p => p.status !== 'completed').length}
+                    </p>
+                    <p className="text-walnut-500">进行中</p>
+                  </div>
+                </div>
               </div>
-              <div>
-                <p className="text-2xl font-bold text-walnut-900">
-                  {projects.filter(p => p.status !== 'completed').length}
-                </p>
-                <p className="text-walnut-500">进行中</p>
+              <div className="bg-white rounded-2xl shadow-sm p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center">
+                    <CheckCircle className="w-6 h-6 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-walnut-900">
+                      {projects.filter(p => p.status === 'completed').length}
+                    </p>
+                    <p className="text-walnut-500">已完成</p>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          <div className="bg-white rounded-2xl shadow-sm p-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center">
-                <CheckCircle className="w-6 h-6 text-green-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-walnut-900">
-                  {projects.filter(p => p.status === 'completed').length}
-                </p>
-                <p className="text-walnut-500">已完成</p>
-              </div>
-            </div>
-          </div>
+            </>
+          )}
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden mb-8">
@@ -135,60 +151,96 @@ const ConstructionPage = () => {
         </div>
 
         <div className="space-y-4">
-          {projects.map((project) => (
-            <Link
-              key={project.id}
-              to={`/construction/${project.id}/progress`}
-              className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow block"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h3 className="text-lg font-semibold text-walnut-900 mb-1">{project.name}</h3>
-                  <p className="text-walnut-500 text-sm flex items-center gap-1">
-                    <Home className="w-4 h-4" />
-                    {project.address}
-                  </p>
+          {loading ? (
+            Array(3).fill(0).map((_, index) => (
+              <div key={index} className="bg-white rounded-2xl shadow-sm p-6 animate-pulse">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="space-y-2">
+                    <div className="h-6 w-48 bg-walnut-100 rounded" />
+                    <div className="h-4 w-64 bg-walnut-100 rounded" />
+                  </div>
+                  <div className="h-7 w-20 bg-walnut-100 rounded-full" />
                 </div>
-                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                  project.status === 'completed'
-                    ? 'bg-green-100 text-green-700'
-                    : project.status === 'construction'
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'bg-gold-100 text-gold-700'
-                }`}>
-                  {project.statusText}
-                </span>
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="h-4 w-32 bg-walnut-100 rounded" />
+                    <div className="h-4 w-12 bg-walnut-100 rounded" />
+                  </div>
+                  <div className="h-2 bg-walnut-100 rounded-full" />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="h-4 w-28 bg-walnut-100 rounded" />
+                    <div className="h-4 w-28 bg-walnut-100 rounded" />
+                  </div>
+                  <div className="h-4 w-16 bg-walnut-100 rounded" />
+                </div>
               </div>
+            ))
+          ) : (
+            projects.map((project) => {
+              const progress = calculateProgress(project.progressNodes);
+              const currentPhase = getCurrentPhase(project);
+              const statusText = statusMap[project.status] || '';
+              const startDate = formatDate(project.createdAt);
+              const expectedDate = formatDate(project.expectedEndDate);
 
-              <div className="mb-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-walnut-600">当前阶段：{project.currentPhase}</span>
-                  <span className="text-sm font-medium text-walnut-900">{project.progress}%</span>
-                </div>
-                <div className="h-2 bg-walnut-100 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full rounded-full transition-all ${
+              return (
+                <Link
+                  key={project._id}
+                  to={`/construction/${project._id}/progress`}
+                  className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow block"
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h3 className="text-lg font-semibold text-walnut-900 mb-1">{project.name}</h3>
+                      <p className="text-walnut-500 text-sm flex items-center gap-1">
+                        <Home className="w-4 h-4" />
+                        {project.address}
+                      </p>
+                    </div>
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${
                       project.status === 'completed'
-                        ? 'bg-green-500'
-                        : 'bg-gold-500'
-                    }`}
-                    style={{ width: `${project.progress}%` }}
-                  />
-                </div>
-              </div>
+                        ? 'bg-green-100 text-green-700'
+                        : project.status === 'constructing'
+                        ? 'bg-blue-100 text-blue-700'
+                        : 'bg-gold-100 text-gold-700'
+                    }`}>
+                      {statusText}
+                    </span>
+                  </div>
 
-              <div className="flex items-center justify-between text-sm text-walnut-500">
-                <div className="flex items-center gap-4">
-                  <span>开工：{project.startDate}</span>
-                  <span>预计完工：{project.expectedDate}</span>
-                </div>
-                <div className="flex items-center gap-1 text-gold-600 font-medium">
-                  查看进度
-                  <ChevronRight className="w-4 h-4" />
-                </div>
-              </div>
-            </Link>
-          ))}
+                  <div className="mb-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-walnut-600">当前阶段：{currentPhase}</span>
+                      <span className="text-sm font-medium text-walnut-900">{progress}%</span>
+                    </div>
+                    <div className="h-2 bg-walnut-100 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all ${
+                          project.status === 'completed'
+                            ? 'bg-green-500'
+                            : 'bg-gold-500'
+                        }`}
+                        style={{ width: `${progress}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between text-sm text-walnut-500">
+                    <div className="flex items-center gap-4">
+                      <span>开工：{startDate}</span>
+                      <span>预计完工：{expectedDate}</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-gold-600 font-medium">
+                      查看进度
+                      <ChevronRight className="w-4 h-4" />
+                    </div>
+                  </div>
+                </Link>
+              );
+            })
+          )}
         </div>
       </div>
     </div>

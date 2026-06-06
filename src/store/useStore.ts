@@ -1,18 +1,28 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { User, Product, Designer, CartItem } from '@/types';
+import { authAPI } from '@/api';
+import type { User, Product, Designer } from '@/types';
+
+interface CartItem {
+  product: Product;
+  quantity: number;
+  selected: boolean;
+}
 
 interface AuthState {
   user: User | null;
+  token: string | null;
   isAuthenticated: boolean;
-  login: (user: User) => void;
+  login: (phone: string, password: string) => Promise<void>;
+  register: (data: any) => Promise<void>;
   logout: () => void;
-  updateUser: (user: Partial<User>) => void;
+  updateUser: (data: any) => Promise<void>;
+  fetchCurrentUser: () => Promise<void>;
 }
 
 interface CartState {
   items: CartItem[];
-  addItem: (product: Product, quantity?: number, specs?: Record<string, string>) => void;
+  addItem: (product: Product, quantity?: number) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   toggleSelect: (productId: string) => void;
@@ -31,123 +41,159 @@ interface SelectionState {
   setSelectedProduct: (product: Product | null) => void;
 }
 
-type StoreState = AuthState & CartState & SelectionState;
+type AppState = AuthState & CartState & SelectionState;
 
-export const useStore = create<StoreState>()(
+export const useStore = create<AppState>()(
   persist(
     (set, get) => ({
       user: null,
+      token: null,
       isAuthenticated: false,
+
+      login: async (phone: string, password: string) => {
+        const res = await authAPI.login({ phone, password });
+        set({
+          user: res.user,
+          token: res.token,
+          isAuthenticated: true,
+        });
+        localStorage.setItem('token', res.token);
+      },
+
+      register: async (data: any) => {
+        const res = await authAPI.register(data);
+        set({
+          user: res.user,
+          token: res.token,
+          isAuthenticated: true,
+        });
+        localStorage.setItem('token', res.token);
+      },
+
+      logout: () => {
+        set({
+          user: null,
+          token: null,
+          isAuthenticated: false,
+          items: [],
+          selectedDesigner: null,
+          selectedProduct: null,
+        });
+        localStorage.removeItem('token');
+      },
+
+      updateUser: async (data: any) => {
+        const res = await authAPI.updateProfile(data);
+        set({ user: res.user });
+      },
+
+      fetchCurrentUser: async () => {
+        try {
+          const res = await authAPI.getCurrentUser();
+          set({ user: res.user, isAuthenticated: true });
+        } catch (error) {
+          set({ user: null, isAuthenticated: false, token: null });
+          localStorage.removeItem('token');
+        }
+      },
+
       items: [],
-      selectedDesigner: null,
-      selectedProduct: null,
 
-      login: (user) => set({ user, isAuthenticated: true }),
+      addItem: (product: Product, quantity: number = 1) => {
+        const items = [...get().items];
+        const productId = product._id || product.id;
+        const existingIndex = items.findIndex(
+          (item) => (item.product._id || item.product.id) === productId
+        );
 
-      logout: () => set({ user: null, isAuthenticated: false, items: [] }),
+        if (existingIndex >= 0) {
+          items[existingIndex].quantity += quantity;
+        } else {
+          items.push({ product, quantity, selected: true });
+        }
 
-      updateUser: (userData) =>
-        set((state) => ({
-          user: state.user ? { ...state.user, ...userData } : null,
-        })),
+        set({ items });
+      },
 
-      addItem: (product, quantity = 1, specs) =>
-        set((state) => {
-          const existingItem = state.items.find(
-            (item) => item.productId === product.id
-          );
+      removeItem: (productId: string) => {
+        set({
+          items: get().items.filter((item) => (item.product._id || item.product.id) !== productId),
+        });
+      },
 
-          if (existingItem) {
-            return {
-              items: state.items.map((item) =>
-                item.productId === product.id
-                  ? { ...item, quantity: item.quantity + quantity }
-                  : item
-              ),
-            };
-          }
+      updateQuantity: (productId: string, quantity: number) => {
+        if (quantity <= 0) {
+          get().removeItem(productId);
+          return;
+        }
 
-          const newItem: CartItem = {
-            id: `${product.id}-${Date.now()}`,
-            productId: product.id,
-            name: product.name,
-            price: product.price,
-            quantity,
-            image: product.images[0] || '',
-            specs,
-            selected: true,
-          };
+        set({
+          items: get().items.map((item) =>
+            (item.product._id || item.product.id) === productId ? { ...item, quantity } : item
+          ),
+        });
+      },
 
-          return {
-            items: [...state.items, newItem],
-          };
-        }),
-
-      removeItem: (productId) =>
-        set((state) => ({
-          items: state.items.filter((item) => item.productId !== productId),
-        })),
-
-      updateQuantity: (productId, quantity) =>
-        set((state) => ({
-          items: state.items
-            .map((item) =>
-              item.productId === productId
-                ? { ...item, quantity: Math.max(0, quantity) }
-                : item
-            )
-            .filter((item) => item.quantity > 0),
-        })),
-
-      toggleSelect: (productId) =>
-        set((state) => ({
-          items: state.items.map((item) =>
-            item.productId === productId
+      toggleSelect: (productId: string) => {
+        set({
+          items: get().items.map((item) =>
+            (item.product._id || item.product.id) === productId
               ? { ...item, selected: !item.selected }
               : item
           ),
-        })),
+        });
+      },
 
-      selectAll: (selected) =>
-        set((state) => ({
-          items: state.items.map((item) => ({ ...item, selected })),
-        })),
+      selectAll: (selected: boolean) => {
+        set({
+          items: get().items.map((item) => ({ ...item, selected })),
+        });
+      },
 
-      clearCart: () => set({ items: [] }),
+      clearCart: () => {
+        set({ items: [] });
+      },
 
       getTotalPrice: () => {
-        const state = get();
-        return state.items.reduce(
-          (total, item) => total + item.price * item.quantity,
+        return get().items.reduce(
+          (total, item) => total + item.product.price * item.quantity,
           0
         );
       },
 
       getTotalItems: () => {
-        const state = get();
-        return state.items.reduce((total, item) => total + item.quantity, 0);
+        return get().items.reduce((total, item) => total + item.quantity, 0);
       },
 
       getSelectedItems: () => {
-        const state = get();
-        return state.items.filter((item) => item.selected);
+        return get().items.filter((item) => item.selected);
       },
 
       getSelectedTotalPrice: () => {
-        const state = get();
-        return state.items
-          .filter((item) => item.selected)
-          .reduce((total, item) => total + item.price * item.quantity, 0);
+        return get()
+          .getSelectedItems()
+          .reduce(
+            (total, item) => total + item.product.price * item.quantity,
+            0
+          );
       },
 
-      setSelectedDesigner: (designer) => set({ selectedDesigner: designer }),
+      selectedDesigner: null,
+      selectedProduct: null,
 
-      setSelectedProduct: (product) => set({ selectedProduct: product }),
+      setSelectedDesigner: (designer: Designer | null) => {
+        set({ selectedDesigner: designer });
+      },
+
+      setSelectedProduct: (product: Product | null) => {
+        set({ selectedProduct: product });
+      },
     }),
     {
-      name: 'zhujia-store',
+      name: 'zhujia-storage',
       partialize: (state) => ({
         user: state.user,
+        token: state.token,
         isAuthenticated: state.isAuthenticated,
         items: state.items,
       }),

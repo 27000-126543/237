@@ -52,6 +52,7 @@ export interface Review {
 // 商品
 export interface Product {
   id: string;
+  _id?: string;
   name: string;
   brand: string;
   category: string;

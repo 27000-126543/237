@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { Upload, X, Check, Star, ArrowRight, Home, Sparkles, Percent, DollarSign, Maximize2, FileText } from 'lucide-react';
-import { designers } from '../data/mockData';
+import { designerAPI } from '@/api';
 
 const MatchPage = () => {
   const [dragActive, setDragActive] = useState(false);
@@ -9,7 +9,7 @@ const MatchPage = () => {
   const [budget, setBudget] = useState(20);
   const [area, setArea] = useState('');
   const [isMatching, setIsMatching] = useState(false);
-  const [matchResults, setMatchResults] = useState<Array<typeof designers[0] & { matchScore: number }> | null>(null);
+  const [matchResults, setMatchResults] = useState<Array<any & { matchScore: number }> | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const styles = [
@@ -56,23 +56,25 @@ const MatchPage = () => {
     );
   };
 
-  const handleMatch = () => {
+  const handleMatch = async () => {
     setIsMatching(true);
-    setTimeout(() => {
-      const results = designers.map(designer => {
-        let score = 60 + Math.random() * 35;
-        if (selectedStyles.length > 0) {
-          const styleMatch = selectedStyles.some(s =>
-            designer.style.includes(s) || designer.tags.some(t => t.includes(s))
-          );
-          if (styleMatch) score += 15;
-        }
-        return { ...designer, matchScore: Math.min(98, Math.round(score)) };
-      }).sort((a, b) => b.matchScore - a.matchScore);
+    try {
+      const response = await designerAPI.matchDesigners({ 
+        styles: selectedStyles, 
+        budget: budget * 10000, 
+        area: Number(area) 
+      });
+      const results = (response.data || response).map((item: any) => ({
+        ...item,
+        matchScore: item.matchScore || Math.round(60 + Math.random() * 35)
+      })).sort((a: any, b: any) => b.matchScore - a.matchScore);
       
       setMatchResults(results);
+    } catch (error) {
+      console.error('匹配设计师失败:', error);
+    } finally {
       setIsMatching(false);
-    }, 2000);
+    }
   };
 
   const getMatchColor = (score: number) => {
@@ -352,15 +354,15 @@ const MatchPage = () => {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {matchResults.map((designer, index) => (
               <div
-                key={designer.id}
+                key={designer._id}
                 className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 <div className="relative">
                   <div className="h-48 overflow-hidden">
                     <img
-                      src={designer.images[0]}
-                      alt={designer.name}
+                      src={designer.designerProfile?.portfolio?.[0]?.coverImage || 'https://picsum.photos/seed/default-cover/800/600'}
+                      alt={designer.name || designer.username || '设计师'}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
                   </div>
@@ -370,8 +372,8 @@ const MatchPage = () => {
                   </div>
                   <div className="absolute -bottom-10 left-6">
                     <img
-                      src={designer.avatar}
-                      alt={designer.name}
+                      src={designer.avatar || 'https://picsum.photos/seed/default-avatar/200/200'}
+                      alt={designer.name || designer.username || '设计师'}
                       className="w-20 h-20 rounded-full object-cover border-4 border-white shadow-lg"
                     />
                   </div>
@@ -380,21 +382,21 @@ const MatchPage = () => {
                 <div className="pt-14 px-6 pb-6">
                   <div className="flex items-start justify-between mb-3">
                     <div>
-                      <h3 className="text-lg font-semibold text-walnut-900">{designer.name}</h3>
-                      <p className="text-walnut-500 text-sm">{designer.title}</p>
+                      <h3 className="text-lg font-semibold text-walnut-900">{designer.name || designer.username}</h3>
+                      <p className="text-walnut-500 text-sm">{designer.designerProfile?.title}</p>
                     </div>
                     <div className="flex items-center gap-1 px-2 py-1 bg-gold-50 rounded-lg">
                       <Star className="w-4 h-4 text-gold-500 fill-current" />
-                      <span className="text-sm font-medium text-gold-700">{designer.rating}</span>
+                      <span className="text-sm font-medium text-gold-700">{designer.designerProfile?.rating || 4.5}</span>
                     </div>
                   </div>
 
                   <p className="text-walnut-600 text-sm mb-4 line-clamp-2">
-                    {designer.description}
+                    {designer.designerProfile?.bio || designer.description || '专注室内设计，为您打造理想家居空间。'}
                   </p>
 
                   <div className="flex flex-wrap gap-2 mb-6">
-                    {designer.tags.slice(0, 3).map((tag, i) => (
+                    {(designer.designerProfile?.styles || []).slice(0, 3).map((tag: string, i: number) => (
                       <span
                         key={i}
                         className="px-3 py-1 bg-walnut-50 text-walnut-600 text-xs rounded-full"
@@ -406,9 +408,9 @@ const MatchPage = () => {
 
                   <div className="flex items-center justify-between">
                     <div>
-                      <span className="text-walnut-400 text-sm">从业 {designer.experience} 年经验</span>
+                      <span className="text-walnut-400 text-sm">从业 {designer.designerProfile?.experience || 5} 年经验</span>
                       <span className="text-walnut-300 mx-2">·</span>
-                      <span className="text-walnut-400 text-sm">{designer.projects} 个作品</span>
+                      <span className="text-walnut-400 text-sm">{designer.designerProfile?.orderCount || 0} 个作品</span>
                     </div>
                     <button className="flex items-center gap-1 text-gold-600 font-medium text-sm hover:text-gold-700 transition-colors">
                       查看详情
