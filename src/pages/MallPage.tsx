@@ -17,7 +17,7 @@ const MallPage = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 100000]);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [showBrandFilter, setShowBrandFilter] = useState(false);
   const [showPriceFilter, setShowPriceFilter] = useState(false);
@@ -38,7 +38,7 @@ const MallPage = () => {
         if (searchKeyword) params.keyword = searchKeyword;
 
         const response = await productAPI.getProducts(params);
-        const data = response.data || response;
+        const data = response.products || response.data || [];
         setProducts(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('获取商品列表失败:', error);

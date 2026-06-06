@@ -1,4 +1,4 @@
-const BASE_URL = '/api';
+const BASE_URL = 'http://localhost:5000/api';
 
 interface RequestOptions extends RequestInit {
   body?: any;

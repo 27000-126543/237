@@ -30,14 +30,12 @@ const getDesigners = async (req, res) => {
 
     res.json({
       success: true,
-      data: {
-        designers,
-        pagination: {
-          page: Number(page),
-          limit: Number(limit),
-          total,
-          totalPages: Math.ceil(total / limit)
-        }
+      designers,
+      pagination: {
+        page: Number(page),
+        limit: Number(limit),
+        total,
+        totalPages: Math.ceil(total / limit)
       }
     });
   } catch (error) {
@@ -58,7 +56,7 @@ const getDesignerDetail = async (req, res) => {
 
     res.json({
       success: true,
-      data: designer
+      designer
     });
   } catch (error) {
     res.status(500).json({ success: false, message: '获取设计师详情失败', error: error.message });
@@ -123,7 +121,7 @@ const matchDesigners = async (req, res) => {
 
     res.json({
       success: true,
-      data: matchedDesigners
+      designers: matchedDesigners
     });
   } catch (error) {
     res.status(500).json({ success: false, message: '智能匹配设计师失败', error: error.message });
@@ -149,16 +147,14 @@ const getDesignerReviews = async (req, res) => {
 
     res.json({
       success: true,
-      data: {
-        reviews,
-        avgRating: Math.round(avgRating * 10) / 10,
-        totalReviews: total,
-        pagination: {
-          page: Number(page),
-          limit: Number(limit),
-          total,
-          totalPages: Math.ceil(total / limit)
-        }
+      reviews,
+      avgRating: Math.round(avgRating * 10) / 10,
+      totalReviews: total,
+      pagination: {
+        page: Number(page),
+        limit: Number(limit),
+        total,
+        totalPages: Math.ceil(total / limit)
       }
     });
   } catch (error) {

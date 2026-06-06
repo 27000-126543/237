@@ -41,14 +41,12 @@ const getProducts = async (req, res) => {
 
     res.json({
       success: true,
-      data: {
-        products,
-        pagination: {
-          page: Number(page),
-          limit: Number(limit),
-          total,
-          totalPages: Math.ceil(total / limit)
-        }
+      products,
+      pagination: {
+        page: Number(page),
+        limit: Number(limit),
+        total,
+        totalPages: Math.ceil(total / limit)
       }
     });
   } catch (error) {
@@ -68,7 +66,7 @@ const getProductDetail = async (req, res) => {
 
     res.json({
       success: true,
-      data: product
+      product
     });
   } catch (error) {
     res.status(500).json({ success: false, message: '获取商品详情失败', error: error.message });
@@ -100,7 +98,7 @@ const getRelatedProducts = async (req, res) => {
 
     res.json({
       success: true,
-      data: relatedProducts
+      products: relatedProducts
     });
   } catch (error) {
     res.status(500).json({ success: false, message: '获取相关商品失败', error: error.message });
